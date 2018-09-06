@@ -11,8 +11,8 @@
   <modules>
     <module>code/routines</module>
     <module>jobs/process/job01_0.1</module>
-    <module>../../GITP/poms</module>
     <module>jobs/process/Developers/Anil/test_joblet_0.1</module>
+    <module>../../GITP/poms</module>
   </modules>
   <properties>
     <talend.project.name>GITP02</talend.project.name>
