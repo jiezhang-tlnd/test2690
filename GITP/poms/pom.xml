@@ -10,6 +10,7 @@
   <url>http://www.talend.org/</url>
   <modules>
     <module>code/routines</module>
+    <module>jobs/joblets/joblet01_0.1</module>
   </modules>
   <properties>
     <talend.project.name>GITP</talend.project.name>
