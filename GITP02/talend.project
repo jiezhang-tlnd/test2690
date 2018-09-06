@@ -107,8 +107,6 @@
     </ItemsRelations>
     <ItemsRelations xmi:id="_G-940LGhEeiUHMTGdrl2PA">
       <baseItem xmi:id="_G-940bGhEeiUHMTGdrl2PA" id="_Ki9G4IEjEei5gPFG-02IbA" version="0.1" type="job"/>
-      <relatedItems xmi:id="_G-940rGhEeiUHMTGdrl2PA" id="_fLINkA2DEeezbKXUENJJPA" version="Latest" type="context"/>
-      <relatedItems xmi:id="_G-9407GhEeiUHMTGdrl2PA" id="_eNmt4IQ-EeeIO8fOIiZJzA" version="Latest" type="context"/>
       <relatedItems xmi:id="_G-941LGhEeiUHMTGdrl2PA" id="SQLike" version="Latest" type="routine"/>
       <relatedItems xmi:id="_G-941bGhEeiUHMTGdrl2PA" id="Numeric" version="Latest" type="routine"/>
       <relatedItems xmi:id="_G-941rGhEeiUHMTGdrl2PA" id="TalendString" version="Latest" type="routine"/>
@@ -125,6 +123,8 @@
       <relatedItems xmi:id="_G-944bGhEeiUHMTGdrl2PA" id="EIMRoutines" version="Latest" type="routine"/>
       <relatedItems xmi:id="_G-944rGhEeiUHMTGdrl2PA" id="DataQualityDependencies" version="Latest" type="routine"/>
       <relatedItems xmi:id="_G-9447GhEeiUHMTGdrl2PA" id="TalendStringUtil" version="Latest" type="routine"/>
+      <relatedItems xmi:id="_LaOjMLGhEeiUHMTGdrl2PA" id="_KHrykIwYEeiDZaZbsySDDw" version="Latest" type="joblet"/>
+      <relatedItems xmi:id="_LaOjMbGhEeiUHMTGdrl2PA" id="MDM" version="Latest" type="routine"/>
     </ItemsRelations>
     <migrationTask xmi:id="_A8RlULGbEeikEJXtoQj1HA" id="org.talend.repository.localprovider.RemoveRoutineFolderTask" breaks="5.1.1" version="5.1.2" status="noimpact"/>
     <migrationTask xmi:id="_A8RlUbGbEeikEJXtoQj1HA" id="org.talend.repository.localprovider.model.migration.ChangeXmiSerialization" breaks="5.1.1" version="5.1.2" status="noimpact"/>
