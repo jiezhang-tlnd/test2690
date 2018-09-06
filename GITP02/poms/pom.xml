@@ -11,8 +11,6 @@
   <modules>
     <module>code/routines</module>
     <module>jobs/process/job01_0.1</module>
-    <module>jobs/joblets/joblet01_0.1</module>
-    <module>jobs/process/Developers/Anil/test_joblet_0.1</module>
     <module>../../GITP/poms</module>
   </modules>
   <properties>
