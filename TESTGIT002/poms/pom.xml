@@ -10,8 +10,8 @@
   <url>http://www.talend.org/</url>
   <modules>
     <module>code/routines</module>
-    <module>../../TESTGIT001/poms</module>
     <module>jobs/process/Developers/Anil/test_joblet_0.1</module>
+    <module>../../TESTGIT001/poms</module>
   </modules>
   <properties>
     <talend.project.name>TESTGIT002</talend.project.name>
