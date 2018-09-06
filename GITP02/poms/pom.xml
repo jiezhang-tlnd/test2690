@@ -11,6 +11,7 @@
   <modules>
     <module>code/routines</module>
     <module>jobs/process/job01_0.1</module>
+    <module>jobs/joblets/joblet01_0.1</module>
   </modules>
   <properties>
     <talend.project.name>GITP02</talend.project.name>
