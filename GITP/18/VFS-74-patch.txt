@@ -1,0 +1,215 @@
+Index: /home/jharrop/workspace200711/vfs-trunk/core/pom.xml
+===================================================================
+--- /home/jharrop/workspace200711/vfs-trunk/core/pom.xml	(revision 645026)
++++ /home/jharrop/workspace200711/vfs-trunk/core/pom.xml	(working copy)
+@@ -74,7 +74,7 @@
+ 		<dependency>
+ 			<groupId>commons-httpclient</groupId>
+ 			<artifactId>commons-httpclient</artifactId>
+-			<version>2.0.2</version>
++			<version>3.0.1</version>
+ 			<optional>true</optional>
+ 		</dependency>
+ 		<dependency>
+Index: /home/jharrop/workspace200711/vfs-trunk/core/src/main/java/org/apache/commons/vfs/provider/AbstractFileObject.java
+===================================================================
+--- /home/jharrop/workspace200711/vfs-trunk/core/src/main/java/org/apache/commons/vfs/provider/AbstractFileObject.java	(revision 645026)
++++ /home/jharrop/workspace200711/vfs-trunk/core/src/main/java/org/apache/commons/vfs/provider/AbstractFileObject.java	(working copy)
+@@ -1342,6 +1342,7 @@
+             }
+             catch (Exception exc)
+             {
++            	exc.printStackTrace();
+                 throw new FileSystemException("vfs.provider/get-type.error", new Object[]{name}, exc);
+             }
+ 
+Index: /home/jharrop/workspace200711/vfs-trunk/core/src/main/java/org/apache/commons/vfs/provider/http/ThreadLocalHttpConnectionManager.java
+===================================================================
+--- /home/jharrop/workspace200711/vfs-trunk/core/src/main/java/org/apache/commons/vfs/provider/http/ThreadLocalHttpConnectionManager.java	(revision 645026)
++++ /home/jharrop/workspace200711/vfs-trunk/core/src/main/java/org/apache/commons/vfs/provider/http/ThreadLocalHttpConnectionManager.java	(working copy)
+@@ -19,6 +19,7 @@
+ import org.apache.commons.httpclient.HostConfiguration;
+ import org.apache.commons.httpclient.HttpConnection;
+ import org.apache.commons.httpclient.HttpConnectionManager;
++import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
+ 
+ import java.io.IOException;
+ import java.io.InputStream;
+@@ -40,25 +41,39 @@
+  */
+ public class ThreadLocalHttpConnectionManager implements HttpConnectionManager
+ {
+-    private static class ConnectionParameters
+-    {
+-        private boolean staleCheck;
+-
+-        public boolean isStaleCheckingEnabled()
+-        {
+-            return staleCheck;
+-        }
+-
+-        public void setStaleCheckingEnabled(boolean b)
+-        {
+-            staleCheck = b;
+-        }
+-
+-        public void populateParameters(HttpConnection connection)
+-        {
+-            connection.setStaleCheckingEnabled(staleCheck);
+-        }
+-    }
++	
++/*
++ * Revision 209275 was compatible with HttpClient 3.0.1
++ * Revision 209411 reverted back to HttpClient 2.0.2 
++ * on the basis that HttpClient 3.0-rc3 and WebDavLib were not compatible,
++ * which was the case at the time (July 2005), but ceased being the case
++ * in Dec 2006 - see https://issues.apache.org/bugzilla/show_bug.cgi?id=35213
++ * 
++ * This version effectively applies the patch which takes you 
++ * from 209411 to 209275.
++ * 
++ */
++	
++	
++//    private static class ConnectionParameters
++//    {
++//        private boolean staleCheck;
++//
++//        public boolean isStaleCheckingEnabled()
++//        {
++//            return staleCheck;
++//        }
++//
++//        public void setStaleCheckingEnabled(boolean b)
++//        {
++//            staleCheck = b;
++//        }
++//
++//        public void populateParameters(HttpConnection connection)
++//        {
++//            connection.setStaleCheckingEnabled(staleCheck);
++//        }
++//    }
+ 
+     /**
+      * Since the same connection is about to be reused, make sure the
+@@ -99,7 +114,8 @@
+     /**
+      * Collection of parameters associated with this connection manager.
+      */
+-    private ConnectionParameters params = new ConnectionParameters();
++    //private ConnectionParameters params = new ConnectionParameters();
++    private HttpConnectionManagerParams params = new HttpConnectionManagerParams();
+ 
+     /**
+      * release the connection of the current thread
+@@ -181,7 +197,7 @@
+     }
+ 
+     /**
+-     * @see HttpConnectionManager#getConnection(HostConfiguration, long)
++     * @see HttpConnectionManager#getConnectionWithTimeout(HostConfiguration, long)
+      * @since 3.0
+      */
+     public HttpConnection getConnectionWithTimeout(
+@@ -194,7 +210,9 @@
+             httpConnection = new HttpConnection(hostConfiguration);
+             setLocalHttpConnection(httpConnection);
+             httpConnection.setHttpConnectionManager(this);
+-            this.params.populateParameters(httpConnection);
++//            this.params.populateParameters(httpConnection);
++            httpConnection.getParams().setDefaults(this.params);
++            
+         }
+         else
+         {
+@@ -257,6 +275,34 @@
+     }
+ 
+     /**
++     * Returns {@link HttpConnectionManagerParams parameters} associated
++     * with this connection manager.
++     *
++     * @see HttpConnectionManagerParams
++     * @since 2.1
++     */
++    public HttpConnectionManagerParams getParams()
++    {
++        return this.params;
++    }
++
++    /**
++     * Assigns {@link HttpConnectionManagerParams parameters} for this
++     * connection manager.
++     *
++     * @see HttpConnectionManagerParams
++     * @since 2.1
++     */
++    public void setParams(final HttpConnectionManagerParams params)
++    {
++        if (params == null)
++        {
++            throw new IllegalArgumentException("Parameters may not be null");
++        }
++        this.params = params;
++    }    
++    
++    /**
+      * @since 3.0
+      */
+     public void closeIdleConnections(long idleTimeout)
+Index: /home/jharrop/workspace200711/vfs-trunk/sandbox/pom.xml
+===================================================================
+--- /home/jharrop/workspace200711/vfs-trunk/sandbox/pom.xml	(revision 645026)
++++ /home/jharrop/workspace200711/vfs-trunk/sandbox/pom.xml	(working copy)
+@@ -50,6 +50,7 @@
+ 		<dependency>
+ 			<groupId>slide</groupId>
+ 			<artifactId>jakarta-slide-webdavlib</artifactId>
++			<!-- FIXME: this snapshot is too old; you need one from Dec 06 or later --> 
+ 			<version>20050629.161100</version>
+ 			<optional>true</optional>
+ 		</dependency>
+@@ -62,7 +63,7 @@
+ 		<dependency>
+ 			<groupId>commons-httpclient</groupId>
+ 			<artifactId>commons-httpclient</artifactId>
+-			<version>2.0.2</version>
++			<version>3.0.1</version>
+ 			<optional>true</optional>
+ 		</dependency>
+ 		<dependency>
+Index: /home/jharrop/workspace200711/vfs-trunk/sandbox/src/main/java/org/apache/commons/vfs/provider/webdav/WebdavFileObject.java
+===================================================================
+--- /home/jharrop/workspace200711/vfs-trunk/sandbox/src/main/java/org/apache/commons/vfs/provider/webdav/WebdavFileObject.java	(revision 645026)
++++ /home/jharrop/workspace200711/vfs-trunk/sandbox/src/main/java/org/apache/commons/vfs/provider/webdav/WebdavFileObject.java	(working copy)
+@@ -114,6 +114,8 @@
+      */
+     private void setDavResource(WebdavResource resource) throws Exception
+     {
++    	System.out.println("In setDavResource");
++    	
+         redirectionResolved = false;
+ 
+         final URLFileName name = (URLFileName) getName();
+@@ -160,7 +162,9 @@
+                 }
+                 // handle the (maybe) redirected url
+                 redirectionResolved = true;
+-                resource.getHttpURL().setEscapedPath(optionsMethod.getURI().getPath());
++                System.out.println(optionsMethod.getURI().getPath());
++//                resource.getHttpURL().setEscapedPath(optionsMethod.getURI().getPath());
++                resource.getHttpURL().setEscapedPath(optionsMethod.getURI().getEscapedPath());
+ 
+                 setAllowedMethods(optionsMethod.getAllowedMethods());
+                 boolean exists = false;
+@@ -187,6 +191,8 @@
+                 }
+                 catch (IOException e)
+                 {
++                	e.printStackTrace();
++                	
+                     throw new FileSystemException(e);
+                 }
+             }
